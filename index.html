@@ -232,13 +232,9 @@ let currentUrl = '';
 function openResult(key, situation) {
   const d = TEAS[key];
 
-  // 구글 시트 기록
-  fetch(SHEET_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ situation: situation, city: key })
-  });
+  // 구글 시트 기록 (GET 방식)
+  const params = new URLSearchParams({ situation: situation, city: key });
+  fetch(`${SHEET_URL}?${params}`, { method: 'GET', mode: 'no-cors' });
   const ink     = d.dark ? '#1C1A17'              : '#ffffff';
   const inkSub  = d.dark ? 'rgba(28,26,23,0.5)'   : 'rgba(255,255,255,0.55)';
   const glassB  = d.dark ? 'rgba(255,255,255,0.95)': 'rgba(20,12,10,0.6)';
