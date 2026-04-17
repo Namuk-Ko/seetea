@@ -141,6 +141,11 @@ html, body { height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hi
         <div class="brew-row"><span class="brew-icon">☕</span><span class="brew-text" id="r-hot"></span></div>
         <div class="brew-row"><span class="brew-icon">🧊</span><span class="brew-text" id="r-ice"></span></div>
       </div>
+      <div id="r-recipe" style="display:none">
+        <div id="r-recipe-divider" style="height:0.5px;margin:10px 0;opacity:0.15"></div>
+        <p id="r-recipe-title" class="brew-title" style="margin-bottom:6px"></p>
+        <div id="r-recipe-steps" class="brew-rows"></div>
+      </div>
     </div>
     <a id="r-btn" href="#" class="btn-shop" onclick="return goShop()">사러 가기 →</a>
     <button class="btn-back" id="r-back" onclick="closeResult()">← 다시 선택하기</button>
@@ -179,6 +184,7 @@ const TEAS = {
     tags:['#저녁','#잠들기2시간전','#감기걸렸을때','#허니아이스티'],
     hot:'HOT 95°C · 300ml · 3분',
     ice:'HOT으로 150ml 우린 후 얼음 추가',
+    recipe: { title:'🍯 허니 아이스티 만드는 법', steps:['티백 2개를 정수물 300ml에 넣고 냉장고에서 8시간 냉침','냉침한 티 100ml + 꿀 15g을 넣고 저으며 녹여줌','레몬즙 3ml + 얼음 약간 + 탄산수 한 캔(190ml)을 넣고 섞어 마심'] },
     url:'https://seeteainthecity.com/product/detail.html?product_no=13'
   },
   barcelona: {
@@ -187,6 +193,7 @@ const TEAS = {
     tags:['#수분보충','#스파클링티','#논알콜드링크','#선셋컬러'],
     hot:'HOT 95°C · 300ml · 3분',
     ice:'HOT으로 150ml 우린 후 얼음 추가',
+    recipe: { title:'🌅 선셋 스프리츠 만드는 법', steps:['티백 1개를 뜨거운물 150ml에 3분 우림','얼음을 넣어 차갑게 만듦','얼음이 많이 녹았다면 추가하고 탄산수 한 캔(190ml)을 넣고 섞어 마심'] },
     url:'https://seeteainthecity.com/product/detail.html?product_no=17'
   }
 };
@@ -237,7 +244,7 @@ function openResult(key) {
   // 로고: 밝은 배경 → 적갈색, 어두운 배경(바르셀로나) → 흰색
   const logo = document.getElementById('r-logo');
   if (logo) logo.style.filter = d.dark ? 'invert(1)' : 'none';
-  document.querySelectorAll('.brew-title,.brew-text,.btn-back').forEach(el => el.style.color = ink);
+  document.querySelectorAll('.brew-title,.brew-text,.btn-back,#r-recipe-title').forEach(el => el.style.color = ink);
 
   document.getElementById('r-divider').style.background = ink;
 
@@ -246,6 +253,19 @@ function openResult(key) {
   document.getElementById('r-type-en').textContent = d.typeEn;
   document.getElementById('r-hot').textContent     = d.hot;
   document.getElementById('r-ice').textContent     = d.ice;
+
+  // 레시피
+  const recipeWrap = document.getElementById('r-recipe');
+  if (d.recipe) {
+    document.getElementById('r-recipe-title').textContent = d.recipe.title;
+    document.getElementById('r-recipe-steps').innerHTML = d.recipe.steps.map((s,i) =>
+      `<div class="brew-row"><span class="brew-icon" style="font-size:11px;opacity:0.6">${i+1}</span><span class="brew-text">${s}</span></div>`
+    ).join('');
+    document.getElementById('r-recipe-divider').style.background = ink;
+    recipeWrap.style.display = 'block';
+  } else {
+    recipeWrap.style.display = 'none';
+  }
 
   document.getElementById('r-tags').innerHTML = d.tags.map(t =>
     `<div class="r-tag-card" style="background:${glassB};border:1px solid ${glassBd};color:${ink}">${t}</div>`
