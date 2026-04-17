@@ -200,16 +200,18 @@ const TEAS = {
 
 const COLORS = { seoul:'#f7c766', tokyo:'#eda9d2', barcelona:'#cc4e38', mosbach:'#efebe1' };
 
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzZlD6ienT90THvEts7LDAERf8y5I3jwQZc1j_Gsm8KB6mJId59A60oGU8SmGyFF1hFMA/exec';
+
 const SITUATIONS = [
-  { text:'아침에\n집중이 필요해',    sub:'#에너지',     city:'seoul'     },
-  { text:'달달한 게\n당길 때',       sub:'#디저트',     city:'tokyo'     },
-  { text:'자기 전에\n릴렉스',        sub:'#슬리핑',     city:'mosbach'   },
-  { text:'밥 먹고\n나른할 때',       sub:'#리셋',       city:'seoul'     },
-  { text:'오후 3시\n티타임',         sub:'#달콤함',     city:'tokyo'     },
-  { text:'스트레스\n받을 때',        sub:'#진정',       city:'mosbach'   },
-  { text:'운동 후\n수분 보충',       sub:'#데일리',     city:'barcelona' },
-  { text:'카페인 없이\n마시고 싶어', sub:'#카페인프리', city:'barcelona' },
-  { text:'일하면서\n마실 차',        sub:'#집중',       city:'seoul'     },
+  { text:'아침에\n집중이 필요해',    sub:'#에너지',     city:'seoul',     label:'아침에 집중이 필요해'    },
+  { text:'달달한 게\n당길 때',       sub:'#디저트',     city:'tokyo',     label:'달달한 게 당길 때'       },
+  { text:'자기 전에\n릴렉스',        sub:'#슬리핑',     city:'mosbach',   label:'자기 전에 릴렉스'        },
+  { text:'밥 먹고\n나른할 때',       sub:'#리셋',       city:'seoul',     label:'밥 먹고 나른할 때'       },
+  { text:'오후 3시\n티타임',         sub:'#달콤함',     city:'tokyo',     label:'오후 3시 티타임'         },
+  { text:'스트레스\n받을 때',        sub:'#진정',       city:'mosbach',   label:'스트레스 받을 때'        },
+  { text:'운동 후\n수분 보충',       sub:'#데일리',     city:'barcelona', label:'운동 후 수분 보충'       },
+  { text:'카페인 없이\n마시고 싶어', sub:'#카페인프리', city:'barcelona', label:'카페인 없이 마시고 싶어' },
+  { text:'일하면서\n마실 차',        sub:'#집중',       city:'seoul',     label:'일하면서 마실 차'        },
 ];
 
 const grid = document.getElementById('sit-grid');
@@ -221,14 +223,22 @@ SITUATIONS.forEach(s => {
     <span class="sit-btn-text">${s.text.replace('\n','<br>')}</span>
     <span class="sit-btn-sub">${s.sub}</span>
   `;
-  btn.onclick = () => openResult(s.city);
+  btn.onclick = () => openResult(s.city, s.label);
   grid.appendChild(btn);
 });
 
 let currentUrl = '';
 
-function openResult(key) {
+function openResult(key, situation) {
   const d = TEAS[key];
+
+  // 구글 시트 기록
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ situation: situation, city: key })
+  });
   const ink     = d.dark ? '#1C1A17'              : '#ffffff';
   const inkSub  = d.dark ? 'rgba(28,26,23,0.5)'   : 'rgba(255,255,255,0.55)';
   const glassB  = d.dark ? 'rgba(255,255,255,0.95)': 'rgba(20,12,10,0.6)';
