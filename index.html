@@ -259,7 +259,7 @@ function openResult(key) {
   if (d.recipe) {
     document.getElementById('r-recipe-title').textContent = d.recipe.title;
     document.getElementById('r-recipe-steps').innerHTML = d.recipe.steps.map((s,i) =>
-      `<div class="brew-row"><span class="brew-icon" style="font-size:11px;opacity:0.6">${i+1}</span><span class="brew-text">${s}</span></div>`
+      `<div class="brew-row"><span class="brew-icon" style="font-size:11px;opacity:0.6;color:${ink}">${i+1}</span><span class="brew-text" style="color:${ink}">${s}</span></div>`
     ).join('');
     document.getElementById('r-recipe-divider').style.background = ink;
     recipeWrap.style.display = 'block';
