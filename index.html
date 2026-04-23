@@ -132,7 +132,8 @@ html, body { height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hi
     </div>
     <p id="r-city" class="r-city"></p>
     <span id="r-type-ko" class="r-type-ko"></span>
-    <span id="r-type-en" class="r-type-en"></span>
+    <span id="r-type-en" class="r-type-en" style="margin-bottom:0.5rem !important"></span>
+    <p id="r-tea-name" style="font-size:18px;font-weight:500;text-align:center;margin-bottom:1.5rem;letter-spacing:0.01em"></p>
     <p id="r-tagline" style="font-size:13px;line-height:1.55;text-align:center;margin-bottom:1.5rem;padding:0 0.5rem;opacity:0.75;font-weight:400"></p>
     <div class="r-divider" id="r-divider"></div>
     <div id="r-tags" class="r-tags-grid"></div>
@@ -166,6 +167,7 @@ const IMG = {
 const TEAS = {
   seoul: {
     city:'Seoul', typeKo:'에너지 티', typeEn:'Energy Tea',
+    teaName:'유자 민트 녹차',
     tagline:'서울의 빠른 리듬 속 집중을 깨우는 에너지 티',
     color:'#f7c766', dark: true,
     tags:['#아침','#밥먹고나서','#리셋&집중','#일하면서'],
@@ -175,6 +177,7 @@ const TEAS = {
   },
   tokyo: {
     city:'Tokyo', typeKo:'디저트 티', typeEn:'Dessert Tea',
+    teaName:'멜론 우롱',
     tagline:'도쿄의 달콤한 오후처럼 디저트가 필요한 순간을 위한 티',
     color:'#eda9d2', dark: true,
     tags:['#오후','#부드러운달콤함','#애프터눈티','#티러버'],
@@ -185,6 +188,7 @@ const TEAS = {
   },
   mosbach: {
     city:'Mosbach', typeKo:'슬리핑 티', typeEn:'Sleeping Tea',
+    teaName:'캐모마일 부케',
     tagline:'모스바흐의 고요한 공기처럼 편안한 휴식을 주는 허브티',
     color:'#efebe1', dark: true,
     tags:['#저녁','#잠들기2시간전','#감기걸렸을때','#허니아이스티'],
@@ -195,6 +199,7 @@ const TEAS = {
   },
   barcelona: {
     city:'Barcelona', typeKo:'데일리 티', typeEn:'Daily Tea',
+    teaName:'머스캣 더블 루이보스',
     tagline:'바르셀로나의 햇살과 여유를 담은 카페인프리 티',
     color:'#cc4e38', dark: false,
     tags:['#수분보충','#스파클링티','#논알콜드링크','#선셋컬러'],
@@ -264,6 +269,9 @@ function openResult(key, situation) {
   document.getElementById('r-city').textContent    = d.city;
   document.getElementById('r-type-ko').textContent = d.typeKo;
   document.getElementById('r-type-en').textContent = d.typeEn;
+  const teaNameEl = document.getElementById('r-tea-name');
+  teaNameEl.textContent = d.teaName || '';
+  teaNameEl.style.color = ink;
   const taglineEl = document.getElementById('r-tagline');
   taglineEl.textContent = d.tagline || '';
   taglineEl.style.color = ink;
@@ -302,6 +310,7 @@ function openResult(key, situation) {
   const btn = document.getElementById('r-btn');
   btn.style.color       = ink;
   btn.style.borderColor = btnBd;
+  btn.textContent       = d.teaName ? `${d.teaName} 사러 가기 →` : '사러 가기 →';
   currentUrl = d.url;
 
   document.getElementById('select').classList.add('hide');
