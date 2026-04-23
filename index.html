@@ -9,7 +9,7 @@
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hidden; }
- 
+
 /* ══ 선택 화면 ══ */
 #select {
   position: fixed; inset: 0;
@@ -133,6 +133,7 @@ html, body { height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hi
     <p id="r-city" class="r-city"></p>
     <span id="r-type-ko" class="r-type-ko"></span>
     <span id="r-type-en" class="r-type-en"></span>
+    <p id="r-tagline" style="font-size:13px;line-height:1.55;text-align:center;margin-bottom:1.5rem;padding:0 0.5rem;opacity:0.75;font-weight:400"></p>
     <div class="r-divider" id="r-divider"></div>
     <div id="r-tags" class="r-tags-grid"></div>
     <div class="brew-card" id="r-brew">
@@ -145,6 +146,7 @@ html, body { height: 100%; font-family: 'Noto Sans KR', sans-serif; overflow: hi
         <div id="r-recipe-divider" style="height:0.5px;margin:10px 0;opacity:0.15"></div>
         <p id="r-recipe-title" class="brew-title" style="margin-bottom:6px"></p>
         <div id="r-recipe-steps" class="brew-rows"></div>
+        <p id="r-recipe-note" style="display:none;font-size:11px;font-style:italic;margin-top:8px;opacity:0.6;line-height:1.5"></p>
       </div>
     </div>
     <a id="r-btn" href="#" class="btn-shop" onclick="return goShop()">사러 가기 →</a>
@@ -164,6 +166,7 @@ const IMG = {
 const TEAS = {
   seoul: {
     city:'Seoul', typeKo:'에너지 티', typeEn:'Energy Tea',
+    tagline:'서울의 빠른 리듬 속 집중을 깨우는 에너지 티',
     color:'#f7c766', dark: true,
     tags:['#아침','#밥먹고나서','#리셋&집중','#일하면서'],
     hot:'HOT 85°C · 300ml · 3분',
@@ -172,6 +175,7 @@ const TEAS = {
   },
   tokyo: {
     city:'Tokyo', typeKo:'디저트 티', typeEn:'Dessert Tea',
+    tagline:'도쿄의 달콤한 오후처럼 디저트가 필요한 순간을 위한 티',
     color:'#eda9d2', dark: true,
     tags:['#오후','#부드러운달콤함','#애프터눈티','#티러버'],
     hot:'HOT 95°C · 300ml · 3분',
@@ -181,6 +185,7 @@ const TEAS = {
   },
   mosbach: {
     city:'Mosbach', typeKo:'슬리핑 티', typeEn:'Sleeping Tea',
+    tagline:'모스바흐의 고요한 공기처럼 편안한 휴식을 주는 허브티',
     color:'#efebe1', dark: true,
     tags:['#저녁','#잠들기2시간전','#감기걸렸을때','#허니아이스티'],
     hot:'HOT 95°C · 300ml · 3분',
@@ -190,6 +195,7 @@ const TEAS = {
   },
   barcelona: {
     city:'Barcelona', typeKo:'데일리 티', typeEn:'Daily Tea',
+    tagline:'바르셀로나의 햇살과 여유를 담은 카페인프리 티',
     color:'#cc4e38', dark: false,
     tags:['#수분보충','#스파클링티','#논알콜드링크','#선셋컬러'],
     hot:'HOT 95°C · 300ml · 3분',
@@ -204,15 +210,15 @@ const COLORS = { seoul:'#f7c766', tokyo:'#eda9d2', barcelona:'#cc4e38', mosbach:
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzZlD6ienT90THvEts7LDAERf8y5I3jwQZc1j_Gsm8KB6mJId59A60oGU8SmGyFF1hFMA/exec';
 
 const SITUATIONS = [
-  { text:'달콤하게\n행복하게',        sub:'#디저트',     city:'tokyo',     label:'달콤하게 행복하게'       },
-  { text:'심신의\n평화',              sub:'#쉬어가기',   city:'mosbach',   label:'심신의 평화'             },
-  { text:'산뜻한 여유,\n수분 보충',   sub:'#데일리',     city:'barcelona', label:'산뜻한 여유, 수분 보충'  },
-  { text:'아침을\n활기차게',          sub:'#에너지',     city:'seoul',     label:'아침을 활기차게'         },
-  { text:'논알콜로\n기분만',          sub:'#건강한저녁', city:'barcelona', label:'논알콜로 기분만'         },
-  { text:'자기 전에\n릴렉스',         sub:'#슬리핑',     city:'mosbach',   label:'자기 전에 릴렉스'        },
-  { text:'카페인 없이\n맛있게',       sub:'#허니아이스티',city:'mosbach',  label:'카페인 없이 맛있게'      },
-  { text:'나를 대접하고\n싶을 때',    sub:'#우아하게',   city:'tokyo',     label:'나를 대접하고 싶을 때'   },
-  { text:'점심 후,\n리프레쉬',        sub:'#리셋',       city:'seoul',     label:'점심 후, 리프레쉬'       },
+  { text:'달콤하게\n행복하게',        sub:'#디저트',       city:'tokyo',     label:'달콤하게 행복하게'        },
+  { text:'심신의\n평화',              sub:'#쉬어가기',     city:'mosbach',   label:'심신의 평화'              },
+  { text:'산뜻한 여유,\n수분 보충',   sub:'#데일리',       city:'barcelona', label:'산뜻한 여유, 수분 보충'   },
+  { text:'아침을\n활기차게',          sub:'#에너지',       city:'seoul',     label:'아침을 활기차게'          },
+  { text:'논알콜로\n기분만',          sub:'#건강한저녁',   city:'barcelona', label:'논알콜로 기분만'          },
+  { text:'자기 전에\n릴렉스',         sub:'#슬리핑',       city:'mosbach',   label:'자기 전에 릴렉스'         },
+  { text:'카페인 없이\n맛있게',       sub:'#허니아이스티', city:'mosbach',   label:'카페인 없이 맛있게'       },
+  { text:'나를 대접하고\n싶을 때',    sub:'#우아하게',     city:'tokyo',     label:'나를 대접하고 싶을 때'    },
+  { text:'점심 후,\n리프레쉬',        sub:'#리셋',         city:'seoul',     label:'점심 후, 리프레쉬'        },
 ];
 
 const grid = document.getElementById('sit-grid');
@@ -233,12 +239,9 @@ let currentUrl = '';
 function openResult(key, situation) {
   const d = TEAS[key];
 
-  // 구글 시트 기록
+  // 구글 시트 기록 (GET 방식)
   const params = new URLSearchParams({ situation: situation, city: key });
-  fetch(SHEET_URL + '?' + params.toString(), {
-    method: 'GET',
-    mode: 'no-cors'
-  });
+  fetch(`${SHEET_URL}?${params}`, { method: 'GET', mode: 'no-cors' });
   const ink     = d.dark ? '#1C1A17'              : '#ffffff';
   const inkSub  = d.dark ? 'rgba(28,26,23,0.5)'   : 'rgba(255,255,255,0.55)';
   const glassB  = d.dark ? 'rgba(255,255,255,0.95)': 'rgba(20,12,10,0.6)';
@@ -261,6 +264,9 @@ function openResult(key, situation) {
   document.getElementById('r-city').textContent    = d.city;
   document.getElementById('r-type-ko').textContent = d.typeKo;
   document.getElementById('r-type-en').textContent = d.typeEn;
+  const taglineEl = document.getElementById('r-tagline');
+  taglineEl.textContent = d.tagline || '';
+  taglineEl.style.color = ink;
   document.getElementById('r-hot').textContent     = d.hot;
   document.getElementById('r-ice').textContent     = d.ice;
 
@@ -270,8 +276,16 @@ function openResult(key, situation) {
     document.getElementById('r-recipe-title').textContent = d.recipe.title;
     document.getElementById('r-recipe-steps').innerHTML = d.recipe.steps.map((s,i) =>
       `<div class="brew-row"><span class="brew-icon" style="font-size:11px;opacity:0.6;color:${ink}">${i+1}</span><span class="brew-text" style="color:${ink}">${s}</span></div>`
-    ).join('') + (d.recipe.note ? `<div class="brew-row" style="margin-top:4px"><span class="brew-icon" style="font-size:11px;color:${ink};opacity:0.5">＊</span><span class="brew-text" style="color:${ink};opacity:0.55;font-size:11px">${d.recipe.note}</span></div>` : '');
+    ).join('');
     document.getElementById('r-recipe-divider').style.background = ink;
+    const noteEl = document.getElementById('r-recipe-note');
+    if (d.recipe.note) {
+      noteEl.textContent = '* ' + d.recipe.note;
+      noteEl.style.color = ink;
+      noteEl.style.display = 'block';
+    } else {
+      noteEl.style.display = 'none';
+    }
     recipeWrap.style.display = 'block';
   } else {
     recipeWrap.style.display = 'none';
